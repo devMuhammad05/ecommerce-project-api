@@ -16,7 +16,7 @@ final class ExampleTest extends TestCase
     {
         $response = $this->get('/api/v1');
 
-        $response->assertStatus(200);
+        $response->assertOk();
         $response->assertSee('API is active');
     }
 }

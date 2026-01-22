@@ -4,10 +4,11 @@ declare(strict_types=1);
 
 namespace App\Http\Resources\Api\V1;
 
+use App\Models\Product;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
-/** @mixin \App\Models\Product */
+/** @mixin Product */
 final class ProductResource extends JsonResource
 {
     /**
@@ -25,7 +26,7 @@ final class ProductResource extends JsonResource
             'status' => $this->status,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
-            'variants' => $this->whenLoaded('variants', fn() => VariantResource::collection($this->variants)),
+            'variants' => $this->whenLoaded('variants', fn () => VariantResource::collection($this->variants)),
         ];
     }
 }

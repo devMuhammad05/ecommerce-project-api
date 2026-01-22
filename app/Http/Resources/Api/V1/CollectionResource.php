@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace App\Http\Resources\Api\V1;
 
-use App\Models\Category;
+use App\Models\Collection;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
-/** @mixin Category */
-final class CategoryResource extends JsonResource
+/** @mixin Collection */
+final class CollectionResource extends JsonResource
 {
     /**
      * Transform the resource into an array.
@@ -23,13 +23,12 @@ final class CategoryResource extends JsonResource
             'name' => $this->name,
             'slug' => $this->slug,
             'description' => $this->description,
-            'image_url' => $this->image_url,
+            'hero_image' => $this->hero_image,
+            'is_featured' => $this->is_featured,
             'position' => $this->position,
             'parent_id' => $this->parent_id,
-            'children' => $this->whenLoaded('children', fn () => CategoryResource::collection($this->children)),
+            'children' => $this->whenLoaded('children', fn () => CollectionResource::collection($this->children)),
             'products' => $this->whenLoaded('products', fn () => ProductResource::collection($this->products)),
-            'products_count' => $this->whenCounted('products'),
-
             // 'created_at' => $this->created_at,
             // 'updated_at' => $this->updated_at,
         ];

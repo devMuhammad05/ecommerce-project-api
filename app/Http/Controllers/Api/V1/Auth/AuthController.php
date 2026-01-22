@@ -4,21 +4,18 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\Api\V1\Auth;
 
-use Illuminate\Contracts\Hashing\Hasher;
-use Illuminate\Auth\AuthManager;
 use App\Http\Controllers\Api\ApiController;
 use App\Http\Requests\Api\V1\Auth\LoginUserRequest;
 use App\Http\Requests\Api\V1\Auth\RegisterUserRequest;
 use App\Models\User;
+use Illuminate\Auth\AuthManager;
+use Illuminate\Contracts\Hashing\Hasher;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Hash;
 
 final class AuthController extends ApiController
 {
-    public function __construct(private readonly Hasher $hasher, private readonly AuthManager $authManager)
-    {
-    }
+    public function __construct(private readonly Hasher $hasher, private readonly AuthManager $authManager) {}
+
     /**
      * Handle a registration request for the application.
      */
@@ -74,7 +71,6 @@ final class AuthController extends ApiController
 
         return $this->successResponse('User logged out successfully');
     }
-
 
     /**
      * Get the authenticated user.
