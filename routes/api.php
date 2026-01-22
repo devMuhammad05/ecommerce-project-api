@@ -12,8 +12,13 @@ Route::get('/user', function (Request $request) {
 Route::prefix('v1')->group(function (): void {
     Route::get('/', fn() => 'API is active');
 
+    // Categories
+    Route::get('/categories', [\App\Http\Controllers\Api\V1\CategoryController::class, 'index']);
+    Route::get('/categories/{slug}', [\App\Http\Controllers\Api\V1\CategoryController::class, 'show']);
+
     // Auth Routes
     Route::prefix('auth')->group(function (): void {
+
         Route::post('/register', [AuthController::class, 'register']);
         Route::post('/login', [AuthController::class, 'login']);
 

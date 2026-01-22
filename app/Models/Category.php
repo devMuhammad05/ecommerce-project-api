@@ -7,10 +7,14 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 final class Category extends Model
 {
+    /** @use HasFactory<\Database\Factories\CategoryFactory> */
+    use HasFactory;
+
     /** @return BelongsToMany<Product, $this> */
     public function products(): BelongsToMany
     {
