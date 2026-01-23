@@ -8,6 +8,7 @@ use App\Models\Collection;
 use App\Models\Product;
 use App\QueryFilters\AttributeValuesFilter;
 use App\Traits\FacetedFiltering;
+use Illuminate\Http\Request;
 use Spatie\QueryBuilder\AllowedFilter;
 use Spatie\QueryBuilder\QueryBuilder;
 
@@ -23,14 +24,15 @@ final class GetCollectionProductsAction
         // Build the base query using the scope
         $productQuery = Product::query()->forCollection($collection->id);
 
-        // Apply attribute filters using Spatie Query Builder
+        // Get filter names from request
         $filters = request()->query('filter', []);
         $allowedFilters = [];
         foreach (array_keys($filters) as $filterName) {
             $allowedFilters[] = AllowedFilter::custom((string) $filterName, new AttributeValuesFilter());
         }
 
-        $filteredQuery = QueryBuilder::for($productQuery)
+        // Build the query with Spatie Query Builder using a fresh request
+        $filteredQuery = QueryBuilder::for($productQuery, request())
             ->allowedFilters($allowedFilters)
             ->allowedIncludes(['variants', 'attributeValues'])
             ->allowedSorts(['name', 'base_price', 'created_at']);

@@ -27,13 +27,13 @@ final class CategoryResource extends JsonResource
             'position' => $this->position,
             'parent_id' => $this->parent_id,
             'children' => $this->whenLoaded('children', fn() => CategoryResource::collection($this->children)),
-            'products' => $this->whenLoaded('products', fn() => ProductResource::collection($this->products)),
-            // 'collections' => $this->when($this->relationLoaded('products'), function () {
-            //     return CollectionResource::collection(
-            //         $this->products->flatMap->collections->unique('id')
-            //     );
-            // }),
-            'products_count' => $this->whenCounted('products'),
+            // 'products' => $this->whenLoaded('products', fn() => ProductResource::collection($this->products)),
+            'collections' => $this->when($this->relationLoaded('products'), function () {
+                return CollectionResource::collection(
+                    $this->products->flatMap->collections->unique('id')
+                );
+            }),
+            // 'products_count' => $this->whenCounted('products'),
         ];
     }
 }

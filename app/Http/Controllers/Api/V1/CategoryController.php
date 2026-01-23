@@ -12,6 +12,7 @@ use App\Http\Resources\Api\V1\CollectionResource;
 use App\Http\Resources\Api\V1\ProductResource;
 use App\Models\Category;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 use Spatie\QueryBuilder\QueryBuilder;
 
 final class CategoryController extends ApiController
@@ -23,7 +24,7 @@ final class CategoryController extends ApiController
     {
         $categories = QueryBuilder::for(Category::class)
             ->whereNull('parent_id')
-            ->allowedIncludes(['children', 'products', 'products.collections'])
+            ->allowedIncludes(['children', 'products.collections'])
             ->orderBy('position')
             ->get();
 
@@ -36,33 +37,47 @@ final class CategoryController extends ApiController
     /**
      * Display the specified category by slug.
      */
-    public function show(string $slug, GetCategoryProductsAction $action): JsonResponse
+    // public function show(string $slug, GetCategoryProductsAction $action): JsonResponse
+    // {
+    //     $category = QueryBuilder::for(Category::class)
+    //         ->where('slug', $slug)
+    //         ->allowedIncludes(['children', 'products'])
+    //         ->first();
+
+    //     if (! $category) {
+    //         return $this->errorResponse('Category not found.', 404);
+    //     }
+
+    //     $result = $action->execute($category, (int) request()->input('per_page', 24));
+
+    //     return $this->successResponse(
+    //         'Category details retrieved successfully.',
+    //         [
+    //             'category' => (new CategoryResource($category))->resolve(),
+    //             'products' => ProductResource::collection($result['products'])->resolve(),
+    //             'collections' => CollectionResource::collection($result['collections'])->resolve(),
+    //             'facets' => AttributeResource::collection($result['facets'])->resolve(),
+    //             'meta' => [
+    //                 'current_page' => $result['products']->currentPage(),
+    //                 'last_page' => $result['products']->lastPage(),
+    //                 'per_page' => $result['products']->perPage(),
+    //                 'total' => $result['products']->total(),
+    //             ],
+    //         ]
+    //     );
+    // }
+
+
+    public function show(string $slug): JsonResponse
     {
         $category = QueryBuilder::for(Category::class)
             ->where('slug', $slug)
-            ->allowedIncludes(['children', 'products'])
+              ->allowedIncludes(['children', 'products.collections'])
             ->first();
 
-        if (! $category) {
-            return $this->errorResponse('Category not found.', 404);
-        }
-
-        $result = $action->execute($category, (int) request()->input('per_page', 24));
-
         return $this->successResponse(
-            'Category details retrieved successfully.',
-            [
-                'category' => (new CategoryResource($category))->resolve(),
-                'products' => ProductResource::collection($result['products'])->resolve(),
-                'collections' => CollectionResource::collection($result['collections'])->resolve(),
-                'facets' => AttributeResource::collection($result['facets'])->resolve(),
-                'meta' => [
-                    'current_page' => $result['products']->currentPage(),
-                    'last_page' => $result['products']->lastPage(),
-                    'per_page' => $result['products']->perPage(),
-                    'total' => $result['products']->total(),
-                ],
-            ]
+            'Categories retrieved successfully.',
+            (new CategoryResource($category))
         );
     }
 }
