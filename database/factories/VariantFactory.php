@@ -27,6 +27,7 @@ final class VariantFactory extends Factory
             'price' => fake()->numberBetween(10000, 1000000), // Prices in cents
             'compare_at_price' => fake()->optional()->numberBetween(10000, 1000000),
             'cost_price' => fake()->numberBetween(5000, 500000),
+
             'weight' => fake()->randomFloat(2, 0.1, 5),
             'height' => fake()->randomFloat(2, 0.1, 10),
             'width' => fake()->randomFloat(2, 0.1, 10),

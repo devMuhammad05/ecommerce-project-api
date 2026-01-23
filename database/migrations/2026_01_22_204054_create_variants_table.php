@@ -16,16 +16,20 @@ return new class extends Migration
             $table->foreignId('product_id')->constrained()->onDelete('cascade');
 
             $table->string('sku')->unique();
-            // $table->decimal('price', 15, 2)->nullable();          
-            // $table->string('currency', 3)->default('USD');
+            $table->decimal('price', 15, 2)->nullable();
+            $table->decimal('compare_at_price', 15, 2)->nullable();
+            $table->decimal('cost_price', 15, 2)->nullable();
+            $table->string('currency', 3)->default('USD');
 
             $table->integer('quantity')->default(1);
-            $table->boolean('is_orderable')->default(true); 
+            $table->boolean('is_orderable')->default(true);
 
             // Physical Specs
-            $table->string('size')->nullable(); // e.g., "17", "Small", "52"
-            $table->string('metal_type')->nullable(); // e.g., "18K Yellow Gold"
-            $table->decimal('weight_grams', 8, 2)->nullable();
+            $table->string('size')->nullable();
+            $table->decimal('weight', 8, 2)->nullable();
+            $table->decimal('height', 8, 2)->nullable();
+            $table->decimal('width', 8, 2)->nullable();
+            $table->decimal('depth', 8, 2)->nullable();
 
             $table->timestamps();
         });

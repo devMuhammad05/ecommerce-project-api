@@ -29,6 +29,7 @@ final class DatabaseSeeder extends Seeder
             CategorySeeder::class,
             CollectionSeeder::class,
             AttributeSeeder::class,
+            ProductSeeder::class,
         ]);
     }
 }

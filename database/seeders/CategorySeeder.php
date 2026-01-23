@@ -37,7 +37,7 @@ final class CategorySeeder extends Seeder
             $parent = Category::create([
                 'name' => $parentName,
                 'slug' => Str::slug($parentName),
-                'description' => "Luxury {$parentName} collection.",
+                'description' => "Luxury {$parentName} category.",
                 'position' => $index++,
                 'parent_id' => null,
             ]);

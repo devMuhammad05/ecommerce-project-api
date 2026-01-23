@@ -16,6 +16,7 @@ return new class extends Migration
         Schema::create('collection_products', function (Blueprint $table) {
             $table->foreignId('product_id')->constrained()->onDelete('cascade');
             $table->foreignId('collection_id')->constrained()->onDelete('cascade');
+            $table->integer('position')->default(0);
             $table->primary(['product_id', 'collection_id']);
         });
     }

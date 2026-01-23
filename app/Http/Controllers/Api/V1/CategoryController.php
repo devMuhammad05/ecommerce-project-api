@@ -8,7 +8,9 @@ use App\Http\Controllers\Api\ApiController;
 use App\Http\Resources\Api\V1\AttributeResource;
 use App\Http\Resources\Api\V1\CategoryResource;
 use App\Http\Resources\Api\V1\ProductResource;
+use App\Http\Resources\Api\V1\CollectionResource;
 use App\Models\Category;
+use App\Models\Collection;
 use App\Models\Product;
 use App\Traits\FacetedFiltering;
 use Illuminate\Http\JsonResponse;
@@ -71,11 +73,17 @@ final class CategoryController extends ApiController
             ])
             ->get();
 
+        // Get relevant collections (collections that have products in this category)
+        $collections = Collection::whereHas('products.categories', function ($query) use ($category) {
+            $query->where('categories.id', $category->id);
+        })->get();
+
         return $this->successResponse(
             'Category details retrieved successfully.',
             [
                 'category' => new CategoryResource($category),
                 'products' => ProductResource::collection($products),
+                'collections' => CollectionResource::collection($collections),
                 'facets' => AttributeResource::collection($facets),
             ]
         );
