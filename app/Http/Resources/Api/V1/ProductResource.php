@@ -26,7 +26,10 @@ final class ProductResource extends JsonResource
             'status' => $this->status,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
-            'variants' => $this->whenLoaded('variants', fn () => VariantResource::collection($this->variants)),
+            'variants' => $this->whenLoaded('variants', fn() => VariantResource::collection($this->variants)),
+            'categories' => $this->whenLoaded('categories', fn() => CategoryResource::collection($this->categories)),
+            'collections' => $this->whenLoaded('collections', fn() => CollectionResource::collection($this->collections)),
+            'attributeValues' => $this->whenLoaded('attributeValues', fn() => AttributeValueResource::collection($this->attributeValues)),
         ];
     }
 }

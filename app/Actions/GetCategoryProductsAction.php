@@ -25,7 +25,16 @@ final class GetCategoryProductsAction
         $productQuery = Product::query()->forCategory($category->id);
 
         // Apply attribute filters using Spatie Query Builder
-        $filteredQuery = QueryBuilder::for($productQuery)
+        // Filter the request to only allow product-specific includes to avoid clashing with category includes
+        $request = request()->duplicate();
+        if ($request->has('include')) {
+            $allowed = ['variants', 'attributeValues', 'images'];
+            $includes = explode(',', (string) $request->input('include'));
+            $filtered = array_intersect($includes, $allowed);
+            $request->query->set('include', implode(',', $filtered));
+        }
+
+        $filteredQuery = QueryBuilder::for($productQuery, $request)
             ->allowedFilters([
                 AllowedFilter::custom('attributes', new AttributeValuesFilter),
             ])

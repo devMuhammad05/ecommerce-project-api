@@ -48,9 +48,9 @@ final class CollectionController extends ApiController
         return $this->successResponse(
             'Collection details retrieved successfully.',
             [
-                'collection' => new CollectionResource($collection),
-                'products' => ProductResource::collection($result['products']),
-                'facets' => AttributeResource::collection($result['facets']),
+                'collection' => (new CollectionResource($collection))->resolve(),
+                'products' => ProductResource::collection($result['products'])->resolve(),
+                'facets' => AttributeResource::collection($result['facets'])->resolve(),
                 'meta' => [
                     'current_page' => $result['products']->currentPage(),
                     'last_page' => $result['products']->lastPage(),

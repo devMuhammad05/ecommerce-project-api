@@ -40,14 +40,14 @@ final class CategoryController extends ApiController
     {
         $category = QueryBuilder::for(Category::class)
             ->where('slug', $slug)
-            ->allowedIncludes(['children'])
+            ->allowedIncludes(['children', 'products'])
             ->first();
 
         if (! $category) {
             return $this->errorResponse('Category not found.', 404);
         }
 
-        $result = $action->execute($category, request()->input('per_page', 24));
+        $result = $action->execute($category, (int) request()->input('per_page', 24));
 
         return $this->successResponse(
             'Category details retrieved successfully.',
@@ -58,10 +58,12 @@ final class CategoryController extends ApiController
                 'description' => $category->description,
                 'image_url' => $category->image_url,
                 'position' => $category->position,
-                'children' => $category->relationLoaded('children') ? CategoryResource::collection($category->children) : null,
-                'products' => ProductResource::collection($result['products']),
-                'collections' => CollectionResource::collection($result['collections']),
-                'facets' => AttributeResource::collection($result['facets']),
+                'children' => $category->relationLoaded('children')
+                    ? CategoryResource::collection($category->children)->resolve()
+                    : null,
+                'products' => ProductResource::collection($result['products'])->resolve(),
+                'collections' => CollectionResource::collection($result['collections'])->resolve(),
+                'facets' => AttributeResource::collection($result['facets'])->resolve(),
                 'meta' => [
                     'current_page' => $result['products']->currentPage(),
                     'last_page' => $result['products']->lastPage(),
