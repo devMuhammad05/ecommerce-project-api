@@ -4,26 +4,30 @@ declare(strict_types=1);
 
 namespace App\Models;
 
-use Database\Factories\VariantFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
-final class Variant extends Model
+final class Cart extends Model
 {
-    /** @use HasFactory<VariantFactory> */
+    /** @use HasFactory<\Database\Factories\CartFactory> */
     use HasFactory;
 
-    /** @return BelongsTo<Product, $this> */
-    public function product(): BelongsTo
+    public function user(): BelongsTo
     {
-        return $this->belongsTo(Product::class);
+        return $this->belongsTo(User::class);
     }
 
-    /** @return HasMany<CartItem, $this> */
-    public function cartItems(): HasMany
+    public function items(): HasMany
     {
         return $this->hasMany(CartItem::class);
+    }
+
+    protected function casts(): array
+    {
+        return [
+            'expires_at' => 'datetime',
+        ];
     }
 }

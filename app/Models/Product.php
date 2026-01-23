@@ -16,7 +16,6 @@ final class Product extends Model
     /** @use HasFactory<ProductFactory> */
     use HasFactory;
 
-
     /** @return HasMany<Variant, $this> */
     public function variants(): HasMany
     {
@@ -39,6 +38,12 @@ final class Product extends Model
     public function attributeValues(): BelongsToMany
     {
         return $this->belongsToMany(AttributeValue::class, 'product_attribute_values');
+    }
+
+    /** @return HasMany<WishlistItem, $this> */
+    public function wishlistItems(): HasMany
+    {
+        return $this->hasMany(WishlistItem::class);
     }
 
     /**
