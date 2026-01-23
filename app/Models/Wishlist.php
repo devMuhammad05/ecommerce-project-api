@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Models;
 
+use App\Enums\WishlistVisibility;
 use Database\Factories\WishlistFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -14,16 +15,6 @@ final class Wishlist extends Model
 {
     /** @use HasFactory<WishlistFactory> */
     use HasFactory;
-
-    protected $fillable = [
-        'user_id',
-        'guest_token',
-        'name',
-        'is_default',
-        'visibility',
-        'share_token',
-        'expires_at',
-    ];
 
     /**
      * @return BelongsTo<User, $this>
@@ -45,6 +36,7 @@ final class Wishlist extends Model
     {
         return [
             'is_default' => 'boolean',
+            'visibility' => WishlistVisibility::class,
             'expires_at' => 'datetime',
         ];
     }
