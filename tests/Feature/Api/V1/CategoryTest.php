@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Tests\Feature\Api\V1;
 
-use App\Models\Collection;
 use App\Models\Category;
+use App\Models\Collection;
 use App\Models\Product;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
@@ -28,7 +28,7 @@ describe('Category API', function () {
                         'name',
                         'slug',
                         'position',
-                    ]
+                    ],
                 ],
             ]);
     });

@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Traits;
 
 use App\Models\Attribute;
-use App\Models\AttributeValue;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Collection;
 

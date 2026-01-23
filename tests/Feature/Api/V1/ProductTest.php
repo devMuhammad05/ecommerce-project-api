@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace Tests\Feature\Api\V1;
 
-use App\Models\Product;
+use App\Models\Attribute;
+use App\Models\AttributeValue;
 use App\Models\Category;
 use App\Models\Collection;
+use App\Models\Product;
 use App\Models\Variant;
-use App\Models\AttributeValue;
-use App\Models\Attribute;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -31,7 +31,7 @@ describe('Product API', function () {
         $attributeValue = AttributeValue::factory()->create([
             'attribute_id' => $attribute->id,
             'value' => 'Gold',
-            'slug' => 'gold'
+            'slug' => 'gold',
         ]);
         $product->attributeValues()->attach($attributeValue);
 
@@ -43,7 +43,7 @@ describe('Product API', function () {
             ->assertJsonCount(1, 'data.variants')
             ->assertJsonCount(1, 'data.categories')
             ->assertJsonCount(1, 'data.collections')
-            ->assertJsonCount(1, 'data.attributeValues');
+            ->assertJsonCount(1, 'data.attribute_values');
     });
 
     test('it returns 404 for non-existent product', function () {

@@ -1,9 +1,11 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Tests\Feature\Api\V1;
 
-use Tests\TestCase;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Tests\TestCase;
 
 uses(TestCase::class, RefreshDatabase::class);
 
@@ -52,6 +54,7 @@ test('guest can add product using an existing valid guest token', function () {
     ]);
 
     $response->assertSuccessful();
+
     expect($response->json('guest_token'))->toBe($cart->guest_token);
 });
 
@@ -66,6 +69,7 @@ test('guest request with non-existent token generates a new one', function () {
     ]);
 
     $response->assertSuccessful();
+
     expect($response->json('guest_token'))->not->toBe($fakeToken);
 });
 
@@ -165,4 +169,35 @@ test('cart endpoint returns null when no cart exists', function () {
 
     $response->assertSuccessful();
     $response->assertJsonPath('data', null);
+});
+
+test('guest can remove item from cart', function () {
+    $variant = Variant::factory()->create();
+    $token = (string) Str::uuid();
+    $cart = Cart::factory()->create(['guest_token' => $token]);
+    $cart->items()->create(['variant_id' => $variant->id, 'quantity' => 2]);
+
+    $response = $this->deleteJson("/api/v1/cart/items/{$variant->id}?guest_token={$token}");
+
+    $response->assertSuccessful();
+    $this->assertDatabaseMissing('cart_items', [
+        'cart_id' => $cart->id,
+        'variant_id' => $variant->id,
+    ]);
+});
+
+test('authenticated user can remove item from cart', function () {
+    $user = User::factory()->create();
+    $variant = Variant::factory()->create();
+    $cart = Cart::factory()->create(['user_id' => $user->id]);
+    $cart->items()->create(['variant_id' => $variant->id, 'quantity' => 1]);
+
+    $response = $this->actingAs($user)
+        ->deleteJson("/api/v1/cart/items/{$variant->id}");
+
+    $response->assertSuccessful();
+    $this->assertDatabaseMissing('cart_items', [
+        'cart_id' => $cart->id,
+        'variant_id' => $variant->id,
+    ]);
 });

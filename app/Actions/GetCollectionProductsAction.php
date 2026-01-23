@@ -19,7 +19,7 @@ final class GetCollectionProductsAction
     /**
      * Execute the action to get filtered and paginated products for a collection.
      */
-    public function execute(Collection $collection, int $perPage = 24, Request $request): array
+    public function execute(Collection $collection, int $perPage, Request $request): array
     {
         // Build the base query using the scope
         $productQuery = Product::query()->forCollection($collection->id);

@@ -21,6 +21,7 @@ final class CategoryFactory extends Factory
     public function definition(): array
     {
         $name = fake()->unique()->words(2, true);
+
         return [
             'parent_id' => null,
             'name' => $name,
@@ -35,7 +36,7 @@ final class CategoryFactory extends Factory
      */
     public function sub(?int $parentId = null): static
     {
-        return $this->state(fn(array $attributes) => [
+        return $this->state(fn (array $attributes) => [
             'parent_id' => $parentId ?? Category::factory(),
         ]);
     }

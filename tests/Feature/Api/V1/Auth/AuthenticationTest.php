@@ -9,8 +9,6 @@ use Tests\TestCase;
 
 uses(TestCase::class, RefreshDatabase::class);
 
-
-
 describe('Authentication API', function () {
     test('user can register successfully', function () {
         $response = $this->postJson('/api/v1/auth/register', [

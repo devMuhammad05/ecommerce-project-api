@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\Api\V1;
 
-use Illuminate\Http\Request;
 use App\Actions\GetCollectionProductsAction;
 use App\Http\Controllers\Api\ApiController;
 use App\Http\Resources\Api\V1\AttributeResource;
@@ -12,6 +11,7 @@ use App\Http\Resources\Api\V1\CollectionResource;
 use App\Http\Resources\Api\V1\ProductResource;
 use App\Models\Collection;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 use Spatie\QueryBuilder\QueryBuilder;
 
 final class CollectionController extends ApiController

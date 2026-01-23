@@ -4,16 +4,19 @@ declare(strict_types=1);
 
 namespace App\Actions;
 
+use Illuminate\Contracts\Cache\Repository;
 use App\Enums\CartStatus;
 use App\Models\Cart;
-use App\Models\CartItem;
 use App\Models\Variant;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Str;
 use InvalidArgumentException;
 
-final class AddProductToCartAction
+final readonly class AddProductToCartAction
 {
+    public function __construct(private Repository $cacheManager)
+    {
+    }
     /**
      * Execute the action to add a product variant to the cart.
      */
@@ -28,17 +31,14 @@ final class AddProductToCartAction
 
         // 1. Validate variant existence and stock
         $variant = Variant::findOrFail($variantId);
-        if ($variant->quantity < $quantity) {
-            throw new InvalidArgumentException("Requested quantity exceeds available stock.");
-        }
+        throw_if($variant->quantity < $quantity, InvalidArgumentException::class, 'Requested quantity exceeds available stock.');
 
         // 2. Add or update the cart item quantity
         $cartItem = $cart->items()->where('variant_id', $variantId)->first();
         if ($cartItem) {
             $newQuantity = $cartItem->quantity + $quantity;
-            if ($variant->quantity < $newQuantity) {
-                throw new InvalidArgumentException("Total quantity exceeds available stock.");
-            }
+            throw_if($variant->quantity < $newQuantity, InvalidArgumentException::class, 'Total quantity exceeds available stock.');
+
             $cartItem->update(['quantity' => $newQuantity]);
         } else {
             $cartItem = $cart->items()->create([
@@ -49,7 +49,7 @@ final class AddProductToCartAction
 
         // 3. Invalidate cache
         $cacheKey = $userId ? "cart:user:{$userId}" : "cart:guest:{$cart->guest_token}";
-        Cache::forget($cacheKey);
+        $this->cacheManager->forget($cacheKey);
 
         return [
             'cart' => $cart->load('items.variant.product'),
@@ -74,6 +74,7 @@ final class AddProductToCartAction
             if ($cart) {
                 return $cart;
             }
+
             // If token provided but no active cart found, we REJECT it and generate a new one later.
         }
 

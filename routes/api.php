@@ -7,12 +7,10 @@ use App\Http\Controllers\Api\V1\CartController;
 use App\Http\Controllers\Api\V1\CategoryController;
 use App\Http\Controllers\Api\V1\CollectionController;
 use App\Http\Controllers\Api\V1\ProductController;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
 Route::prefix('v1')->group(function (): void {
-    Route::get('/', fn() => 'API is active');
-
+    Route::get('/', fn () => 'API is active');
 
     // Auth Routes
     Route::prefix('auth')->group(function (): void {
@@ -40,5 +38,6 @@ Route::prefix('v1')->group(function (): void {
     Route::prefix('cart')->group(function (): void {
         Route::get('/', [CartController::class, 'index']);
         Route::post('/items', [CartController::class, 'store']);
+        Route::delete('/items/{variant_id}', [CartController::class, 'destroy']);
     });
 });

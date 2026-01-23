@@ -36,7 +36,7 @@ final class ProductSeeder extends Seeder
                 'variants' => [
                     ['sku' => 'CR-LOVE-PL-01', 'price' => 250000, 'quantity' => 5],
                     ['sku' => 'CR-LOVE-PL-02', 'price' => 250000, 'quantity' => 3],
-                ]
+                ],
             ],
             [
                 'name' => 'Trinity Necklace',
@@ -45,7 +45,7 @@ final class ProductSeeder extends Seeder
                 'attributes' => ['Rose Gold', 'Women'],
                 'variants' => [
                     ['sku' => 'CR-TRIN-RG-01', 'price' => 180000, 'quantity' => 10],
-                ]
+                ],
             ],
             [
                 'name' => 'Panthère de Cartier Bracelet',
@@ -54,7 +54,7 @@ final class ProductSeeder extends Seeder
                 'attributes' => ['White Gold', 'Women', 'Emerald'],
                 'variants' => [
                     ['sku' => 'CR-PAN-WG-01', 'price' => 850000, 'quantity' => 2],
-                ]
+                ],
             ],
             [
                 'name' => 'Iconic Watch',
@@ -63,7 +63,7 @@ final class ProductSeeder extends Seeder
                 'attributes' => ['Platinum', 'Men'],
                 'variants' => [
                     ['sku' => 'CR-WAT-PL-01', 'price' => 1500000, 'quantity' => 1],
-                ]
+                ],
             ],
             [
                 'name' => 'Cushion Cut Diamond Ring',
@@ -72,7 +72,7 @@ final class ProductSeeder extends Seeder
                 'attributes' => ['White Gold', 'Women', 'Cushion'],
                 'variants' => [
                     ['sku' => 'CR-DIA-CUSH-01', 'price' => 1200000, 'quantity' => 4],
-                ]
+                ],
             ],
         ];
 

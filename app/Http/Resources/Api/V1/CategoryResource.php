@@ -26,7 +26,7 @@ final class CategoryResource extends JsonResource
             'image_url' => $this->image_url,
             'position' => $this->position,
             'parent_id' => $this->parent_id,
-            'children' => $this->whenLoaded('children', fn() => CategoryResource::collection($this->children)),
+            'children' => $this->whenLoaded('children', fn () => CategoryResource::collection($this->children)),
             // 'products' => $this->whenLoaded('products', fn() => ProductResource::collection($this->products)),
             'collections' => $this->when($this->relationLoaded('products'), function () {
                 return CollectionResource::collection(

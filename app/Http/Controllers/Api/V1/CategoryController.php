@@ -67,12 +67,11 @@ final class CategoryController extends ApiController
     //     );
     // }
 
-
     public function show(string $slug): JsonResponse
     {
         $category = QueryBuilder::for(Category::class)
             ->where('slug', $slug)
-              ->allowedIncludes(['children', 'products.collections'])
+            ->allowedIncludes(['children', 'products.collections'])
             ->first();
 
         return $this->successResponse(

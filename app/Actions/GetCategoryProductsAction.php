@@ -4,13 +4,13 @@ declare(strict_types=1);
 
 namespace App\Actions;
 
-use Illuminate\Http\Request;
-use Illuminate\Contracts\Database\Query\Builder;
 use App\Models\Category;
 use App\Models\Collection;
 use App\Models\Product;
 use App\QueryFilters\AttributeValuesFilter;
 use App\Traits\FacetedFiltering;
+use Illuminate\Contracts\Database\Query\Builder;
+use Illuminate\Http\Request;
 use Spatie\QueryBuilder\AllowedFilter;
 use Spatie\QueryBuilder\QueryBuilder;
 
@@ -21,7 +21,7 @@ final class GetCategoryProductsAction
     /**
      * Execute the action to get filtered and paginated products for a category.
      */
-    public function execute(Category $category, int $perPage = 24, Request $request): array
+    public function execute(Category $category, int $perPage, Request $request): array
     {
         // Build the base query using the scope
         $productQuery = Product::query()->forCategory($category->id);

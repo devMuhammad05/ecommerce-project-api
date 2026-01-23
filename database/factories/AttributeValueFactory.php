@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Database\Factories;
 
 use App\Models\Attribute;
-use App\Models\AttributeValue;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Str;
 
@@ -22,6 +21,7 @@ final class AttributeValueFactory extends Factory
     public function definition(): array
     {
         $value = fake()->unique()->word();
+
         return [
             'attribute_id' => Attribute::factory(),
             'value' => ucfirst($value),
