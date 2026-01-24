@@ -358,7 +358,6 @@ Explicit ordering of media for products.
 
 ---
 
-
 # 9. Cart (Shopping Session)
 
 **Purpose**  
@@ -464,6 +463,7 @@ Represents a single line item in a cart.
 ### API Authentication Strategy
 
 **Guest Carts:**
+
 ```
 Header: X-Guest-Token: {uuid}
 OR
@@ -471,11 +471,13 @@ Body: { "guest_token": "{uuid}" }
 ```
 
 **User Carts:**
+
 ```
 Header: Authorization: Bearer {token}
 ```
 
 ### Merge Strategy (Guest → User on Login)
+
 ```
 POST /api/cart/merge
 Body: { "guest_token": "{uuid}" }
@@ -488,7 +490,7 @@ IF user has active cart AND guest_token cart exists:
     ELSE:
       INSERT guest_cart_item INTO user_cart
   guest_cart.status = 'Merged'
-  
+
 Response: merged user cart
 ```
 
@@ -497,6 +499,7 @@ Response: merged user cart
 ## 9.4 API Endpoints
 
 ### Guest Cart Endpoints
+
 ```
 POST   /api/cart/init              → Create guest cart, return guest_token
 GET    /api/cart                   → Fetch cart (guest_token required)
@@ -507,6 +510,7 @@ DELETE /api/cart                   → Clear cart
 ```
 
 ### Authenticated Cart Endpoints
+
 ```
 GET    /api/cart                   → Fetch user cart (auth required)
 POST   /api/cart/items             → Add item to cart
@@ -622,6 +626,7 @@ Represents a product saved to a wishlist.
 ### API Authentication Strategy
 
 **Guest Wishlists:**
+
 ```
 Header: X-Guest-Token: {uuid}
 OR
@@ -629,11 +634,13 @@ Body: { "guest_token": "{uuid}" }
 ```
 
 **User Wishlists:**
+
 ```
 Header: Authorization: Bearer {token}
 ```
 
 ### Merge Strategy (Guest → User on Login)
+
 ```
 POST /api/wishlist/merge
 Body: { "guest_token": "{uuid}" }
@@ -644,11 +651,12 @@ IF user has default wishlist AND guest_token wishlist exists:
     IF product NOT IN user default wishlist:
       INSERT guest_wishlist_item INTO user_default_wishlist
   guest_wishlist.expires_at = NOW()
-  
+
 Response: merged user default wishlist
 ```
 
 ### Move to Cart
+
 ```
 POST /api/wishlist/{wishlist_id}/items/{item_id}/move-to-cart
 Body: { "variant_id": "{uuid}", "quantity": 1 }
@@ -673,6 +681,7 @@ Allows users to share wishlists publicly via API.
 - Share tokens must be revocable
 
 **API Endpoint**
+
 ```
 GET /api/wishlist/shared/{share_token}  → Fetch shared wishlist (no auth)
 ```
@@ -682,6 +691,7 @@ GET /api/wishlist/shared/{share_token}  → Fetch shared wishlist (no auth)
 ## 10.5 API Endpoints
 
 ### Guest Wishlist Endpoints
+
 ```
 POST   /api/wishlist/init                          → Create guest wishlist, return guest_token
 GET    /api/wishlist                               → Fetch default wishlist (guest_token required)
@@ -690,6 +700,7 @@ DELETE /api/wishlist/items/{id}                    → Remove product from wishl
 ```
 
 ### Authenticated Wishlist Endpoints
+
 ```
 GET    /api/wishlist                               → Fetch default wishlist (auth required)
 GET    /api/wishlist/all                           → Fetch all user wishlists
@@ -707,6 +718,7 @@ POST   /api/wishlist/{id}/items/{item_id}/move-to-cart → Move item to cart
 ```
 
 ### Public Wishlist Endpoints
+
 ```
 GET    /api/wishlist/shared/{share_token}          → View shared wishlist (no auth)
 ```
@@ -715,19 +727,119 @@ GET    /api/wishlist/shared/{share_token}          → View shared wishlist (no 
 
 ## Cart vs Wishlist Summary
 
-| Aspect | Cart | Wishlist |
-|--------|------|----------|
-| References | Variant (sellable unit) | Product (design) |
-| Intent | Immediate purchase | Future consideration |
-| Guest Support | Token-based, 7-30 days | Token-based, 30-90 days |
-| Multiplicity | One active cart per user/guest | Multiple named wishlists |
-| Sharing | Not shareable | Shareable via share_token |
-| Price Snapshot | Yes (for analytics) | No |
-| Merge on Login | Additive (quantities sum) | Deduplicates by product |
-| Guest Token | X-Guest-Token header | X-Guest-Token header |
-| Auth Token | Authorization: Bearer | Authorization: Bearer |
+| Aspect         | Cart                           | Wishlist                  |
+| -------------- | ------------------------------ | ------------------------- |
+| References     | Variant (sellable unit)        | Product (design)          |
+| Intent         | Immediate purchase             | Future consideration      |
+| Guest Support  | Token-based, 7-30 days         | Token-based, 30-90 days   |
+| Multiplicity   | One active cart per user/guest | Multiple named wishlists  |
+| Sharing        | Not shareable                  | Shareable via share_token |
+| Price Snapshot | Yes (for analytics)            | No                        |
+| Merge on Login | Additive (quantities sum)      | Deduplicates by product   |
+| Guest Token    | X-Guest-Token header           | X-Guest-Token header      |
+| Auth Token     | Authorization: Bearer          | Authorization: Bearer     |
 
+# 11. Coupon (Discounts)
 
+**Purpose**  
+Encourages purchases via percentage or fixed-amount discounts. Can be scoped to specific entities or applied to the entire cart.
+
+**Rules**
+
+- Must have a unique code.
+- Can be percentage-based or fixed-amount.
+- Validity is date-driven (`starts_at`, `ends_at`).
+- Supports usage limits (total and per-user).
+- Scoping is handled via pivot tables for targeted discounts.
+- Deleting a coupon must not delete linked entities (Products, Categories, etc.).
+
+**Fields**
+
+- `id`
+- `code` (Unique uppercase string)
+- `description` (nullable)
+- `type` (Enum: CouponType)
+- `value` (integer, stored in cents for fixed or as basis points for percentage)
+- `currency` (string, 3 chars, nullable)
+- `min_cart_total` (integer, cents, nullable)
+- `max_discount_amount` (integer, cents, nullable, for percentage coupons)
+- `usage_limit` (integer, nullable)
+- `usage_count` (integer, default 0)
+- `starts_at` (datetime, nullable)
+- `ends_at` (datetime, nullable)
+- `status` (Enum: CouponStatus)
+- `created_at`
+- `updated_at`
+
+**Relationships**
+
+- belongsToMany → Products
+- belongsToMany → Variants
+- belongsToMany → Categories
+- belongsToMany → Collections
+
+---
+
+## 11.1 coupon_product
+
+**Purpose**  
+Scopes a coupon to specific products.
+
+**Fields**
+
+- `coupon_id`
+- `product_id`
+
+---
+
+## 11.2 coupon_variant
+
+**Purpose**  
+Scopes a coupon to specific variants.
+
+**Fields**
+
+- `coupon_id`
+- `variant_id`
+
+---
+
+## 11.3 coupon_category
+
+**Purpose**  
+Scopes a coupon to all products within specific categories.
+
+**Fields**
+
+- `coupon_id`
+- `category_id`
+
+---
+
+## 11.4 coupon_collection
+
+**Purpose**  
+Scopes a coupon to all products within specific collections.
+
+**Fields**
+
+- `coupon_id`
+- `collection_id`
+
+---
+
+## 11.5 coupon_user
+
+**Purpose**  
+Tracks coupon usage by specific users to enforce per-user limits.
+
+**Fields**
+
+- `coupon_id`
+- `user_id`
+- `used_at`
+
+---
 
 ## Pivot Table Invariants
 
@@ -756,3 +868,8 @@ campaign_product → promotional visibility
 product_attribute_value → filtering
 product_media → visual ordering
 variant_media → variant visuals
+coupon_product → targeted discount (Product)
+coupon_variant → targeted discount (Variant)
+coupon_category → targeted discount (Category)
+coupon_collection → targeted discount (Collection)
+coupon_user → track user usage
