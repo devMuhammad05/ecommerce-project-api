@@ -4,13 +4,13 @@ declare(strict_types=1);
 
 namespace App\Filament\Resources\Categories\Tables;
 
-use Filament\Tables\Filters\TernaryFilter;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
-use Filament\Tables\Columns\IconColumn;
+use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Columns\ImageColumn;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Filters\TernaryFilter;
 use Filament\Tables\Table;
 
 final class CategoriesTable
@@ -38,10 +38,14 @@ final class CategoriesTable
                     ->label('Order')
                     ->numeric()
                     ->sortable(),
-                IconColumn::make('is_active')
+                TextColumn::make('is_active')
                     ->label('Status')
-                    ->boolean()
+                    ->badge()
+                    ->formatStateUsing(fn (bool $state): string => $state ? 'Active' : 'Inactive')
+                    ->color(fn (bool $state): string => $state ? 'success' : 'gray')
+                    ->icon(fn (bool $state) => $state ? Heroicon::OutlinedCheckCircle : Heroicon::OutlinedXCircle)
                     ->sortable(),
+
                 TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()

@@ -38,4 +38,17 @@ final class Collection extends Model
     {
         return $this->hasMany(self::class, 'parent_id');
     }
+
+    /**
+     * Get the attributes that should be cast.
+     *
+     * @return array<string, string>
+     */
+    protected function casts(): array
+    {
+        return [
+            'is_active' => 'boolean',
+            'is_featured' => 'boolean',
+        ];
+    }
 }

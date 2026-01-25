@@ -21,6 +21,7 @@ return new class extends Migration
             $table->text('description')->nullable();
             $table->string('hero_image')->nullable();
             $table->boolean('is_featured')->default(false)->index();
+            $table->boolean('is_active')->default(true)->index();
             $table->integer('position')->default(0);
             $table->timestamps();
         });

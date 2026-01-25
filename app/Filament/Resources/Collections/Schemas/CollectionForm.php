@@ -51,6 +51,12 @@ final class CollectionForm
                             ->required()
                             ->default(false),
 
+                        Toggle::make('is_active')
+                            ->label('Visible in Storefront')
+                            ->helperText('If disabled, this collection will be hidden from customers')
+                            ->required()
+                            ->default(true),
+
                         Textarea::make('description')
                             ->label('Description')
                             ->placeholder('Provide a brief overview of this collection...')
