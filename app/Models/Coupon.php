@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Attributes\Scope;
+use Illuminate\Database\Eloquent\Relations\Pivot;
 use App\Enums\CouponStatus;
 use App\Enums\CouponType;
 use Illuminate\Database\Eloquent\Builder;
@@ -15,7 +17,8 @@ final class Coupon extends Model
     /**
      * Scope a query to only include active coupons.
      */
-    public function scopeActive(Builder $query): Builder
+    #[Scope]
+    protected function active(Builder $query): Builder
     {
         return $query->where('status', CouponStatus::Active)
             ->where(function (Builder $query) {
@@ -34,6 +37,7 @@ final class Coupon extends Model
 
     /**
      * Targeted products for this coupon.
+     * @return BelongsToMany<Product, $this, Pivot>
      */
     public function products(): BelongsToMany
     {
@@ -42,6 +46,7 @@ final class Coupon extends Model
 
     /**
      * Targeted variants for this coupon.
+     * @return BelongsToMany<Variant, $this, Pivot>
      */
     public function variants(): BelongsToMany
     {
@@ -50,6 +55,7 @@ final class Coupon extends Model
 
     /**
      * Targeted categories for this coupon.
+     * @return BelongsToMany<Category, $this, Pivot>
      */
     public function categories(): BelongsToMany
     {
@@ -58,6 +64,7 @@ final class Coupon extends Model
 
     /**
      * Targeted collections for this coupon.
+     * @return BelongsToMany<Collection, $this, Pivot>
      */
     public function collections(): BelongsToMany
     {

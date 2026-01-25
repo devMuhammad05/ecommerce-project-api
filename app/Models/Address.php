@@ -12,7 +12,7 @@ final class Address extends Model
     /**
      * Get the user that owns the address.
      *
-     * @return BelongsTo<User, Address>
+     * @return BelongsTo<User, $this>
      */
     public function user(): BelongsTo
     {

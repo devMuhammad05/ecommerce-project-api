@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use App\Http\Controllers\Api\V1\AddressController;
 use App\Http\Controllers\Api\V1\Auth\AuthController;
 use App\Http\Controllers\Api\V1\CartController;
 use App\Http\Controllers\Api\V1\CategoryController;
@@ -34,6 +35,11 @@ Route::prefix('v1')->group(function (): void {
 
     // Products
     Route::get('/products/{slug}', [ProductController::class, 'show']);
+
+    Route::middleware('auth:sanctum')->group(function (): void {
+        // Addresses
+        Route::post('/addresses', [AddressController::class, 'store']);
+    });
 
     // Cart
     Route::prefix('cart')->group(function (): void {

@@ -23,7 +23,7 @@ final class WishlistController extends ApiController
             guestToken: $request->query('guest_token')
         );
 
-        if (! $wishlist) {
+        if ($wishlist === null) {
             return $this->successResponse('Wishlist is empty.', null);
         }
 
