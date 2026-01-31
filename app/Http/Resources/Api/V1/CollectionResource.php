@@ -29,8 +29,6 @@ final class CollectionResource extends JsonResource
             'parent_id' => $this->parent_id,
             'children' => $this->whenLoaded('children', fn () => CollectionResource::collection($this->children)),
             'products' => $this->whenLoaded('products', fn () => ProductResource::collection($this->products)),
-            // 'created_at' => $this->created_at,
-            // 'updated_at' => $this->updated_at,
         ];
     }
 }

@@ -26,3 +26,4 @@
     - **Fallback**: If no specific matching icon is found that fits the resource context, you may result to a generic but appropriate default.
 
 
+**For all resources with slug, ensure the slug source is set to unique in the form**

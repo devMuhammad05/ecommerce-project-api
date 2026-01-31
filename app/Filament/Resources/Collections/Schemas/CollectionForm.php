@@ -28,6 +28,7 @@ final class CollectionForm
                             ->label('Collection Name')
                             ->placeholder('e.g. Summer Brilliance')
                             ->required()
+                            ->unique()
                             ->maxLength(255)
                             ->live(onBlur: true),
 

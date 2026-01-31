@@ -21,6 +21,14 @@ final class CollectionSeeder extends Seeder
                 'description' => 'A symbol of free-spirited love. Its binding closure and visible screws give it true permanence, while diverse interpretations allow for a unique expression of feelings. Lock in your love, forever.',
                 'is_featured' => true,
                 'position' => 1,
+                'children' => [
+                    [
+                        'name' => 'LOVE Bracelets',
+                        'description' => 'The LOVE bracelet is a flat bangle studded with screws that locks to the wrist. A jewelry icon, the LOVE bracelet can only be opened with a screwdriver.',
+                        'is_featured' => false,
+                        'position' => 1,
+                    ],
+                ],
             ],
             [
                 'name' => 'Panthère de Cartier',
@@ -37,13 +45,21 @@ final class CollectionSeeder extends Seeder
         ];
 
         foreach ($collections as $data) {
-            Collection::create([
-                'name' => $data['name'],
+            $children = $data['children'] ?? [];
+            unset($data['children']);
+
+            $collection = Collection::create([
+                ...$data,
                 'slug' => Str::slug($data['name']),
-                'description' => $data['description'],
-                'is_featured' => $data['is_featured'],
-                'position' => $data['position'],
             ]);
+
+            foreach ($children as $childData) {
+                Collection::create([
+                    ...$childData,
+                    'parent_id' => $collection->id,
+                    'slug' => Str::slug($childData['name']),
+                ]);
+            }
         }
     }
 }

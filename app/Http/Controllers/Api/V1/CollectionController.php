@@ -36,32 +36,35 @@ final class CollectionController extends ApiController
     /**
      * Display the specified collection by slug.
      */
-    public function show(string $slug, GetCollectionProductsAction $action, Request $request): JsonResponse
+    public function show(string $slug, GetCollectionProductsAction $action, Request $request)
     {
         $collection = QueryBuilder::for(Collection::class)
             ->where('slug', $slug)
-            ->allowedIncludes(['children'])
+             ->allowedIncludes(['children', 'products'])
             ->first();
 
-        if (! $collection) {
-            return $this->errorResponse('Collection not found.', 404);
-        }
-
-        $result = $action->execute($collection, $request->input('per_page', 24));
-
-        return $this->successResponse(
-            'Collection details retrieved successfully.',
-            [
-                'collection' => (new CollectionResource($collection))->resolve(),
-                'products' => ProductResource::collection($result['products'])->resolve(),
-                'facets' => AttributeResource::collection($result['facets'])->resolve(),
-                'meta' => [
-                    'current_page' => $result['products']->currentPage(),
-                    'last_page' => $result['products']->lastPage(),
-                    'per_page' => $result['products']->perPage(),
-                    'total' => $result['products']->total(),
-                ],
-            ]
+         return $this->successResponse(
+            'Collection retrieved successfully.',
+            (new CollectionResource($collection))
         );
+
+        // dd($collection);
+
+        // $result = $action->execute($collection, $request->input('per_page', 24));
+
+        // return $this->successResponse(
+        //     'Collection details retrieved successfully.',
+        //     [
+        //         'collection' => (new CollectionResource($collection))->resolve(),
+        //         'products' => ProductResource::collection($result['products'])->resolve(),
+        //         'facets' => AttributeResource::collection($result['facets'])->resolve(),
+        //         'meta' => [
+        //             'current_page' => $result['products']->currentPage(),
+        //             'last_page' => $result['products']->lastPage(),
+        //             'per_page' => $result['products']->perPage(),
+        //             'total' => $result['products']->total(),
+        //         ],
+        //     ]
+        // );
     }
 }
