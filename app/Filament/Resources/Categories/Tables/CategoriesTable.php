@@ -26,9 +26,9 @@ final class CategoriesTable
                     ->label('Category Name')
                     ->searchable()
                     ->sortable(),
-                TextColumn::make('slug')
-                    ->searchable()
-                    ->toggleable(isToggledHiddenByDefault: true),
+                // TextColumn::make('slug')
+                //     ->searchable()
+                //     ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('parent.name')
                     ->label('Parent Category')
                     ->searchable()
