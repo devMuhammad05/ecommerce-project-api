@@ -24,10 +24,11 @@ final class ProductResource extends JsonResource
             'slug' => $this->slug,
             'description' => $this->description,
             'status' => $this->status,
-            'variants' => $this->whenLoaded('variants', fn () => VariantResource::collection($this->variants)),
-            'categories' => $this->whenLoaded('categories', fn () => CategoryResource::collection($this->categories)),
-            'collections' => $this->whenLoaded('collections', fn () => CollectionResource::collection($this->collections)),
-            'attribute_values' => $this->whenLoaded('attributeValues', fn () => AttributeValueResource::collection($this->attributeValues)),
+            'is_featured' => $this->is_featured,
+            'variants' => $this->whenLoaded('variants', fn() => VariantResource::collection($this->variants)),
+            'categories' => $this->whenLoaded('categories', fn() => CategoryResource::collection($this->categories)),
+            'collections' => $this->whenLoaded('collections', fn() => CollectionResource::collection($this->collections)),
+            'attribute_values' => $this->whenLoaded('attributeValues', fn() => AttributeValueResource::collection($this->attributeValues)),
         ];
     }
 }

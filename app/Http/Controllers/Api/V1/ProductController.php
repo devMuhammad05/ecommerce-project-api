@@ -13,13 +13,36 @@ use Spatie\QueryBuilder\QueryBuilder;
 final class ProductController extends ApiController
 {
     /**
+     * Display a listing of the products.
+     */
+    public function index(): JsonResponse
+    {
+        $query = QueryBuilder::for(Product::class)
+            ->allowedIncludes(['variants', 'categories', 'collections', 'attributeValues.attribute'])
+            ->allowedFilters(['status']);
+
+        $hasFeatured = Product::query()->where('is_featured', true)->exists();
+
+        if ($hasFeatured) {
+            $query->where('is_featured', true);
+        }
+
+        $products = $query->inRandomOrder()->paginate();
+
+        return $this->successResponse(
+            'Products retrieved successfully.',
+            ProductResource::collection($products)
+        );
+    }
+
+    /**
      * Display the specified product by slug.
      */
     public function show(string $slug): JsonResponse
     {
         $product = QueryBuilder::for(Product::class)
             ->where('slug', $slug)
-            ->allowedIncludes(['variants', 'categories', 'collections', 'attributeValues', 'attributeValues.attribute'])
+            ->allowedIncludes(['variants', 'categories', 'collections', 'attributeValues.attribute'])
             ->first();
 
         if (! $product) {

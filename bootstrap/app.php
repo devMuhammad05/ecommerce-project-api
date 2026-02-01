@@ -7,6 +7,7 @@ use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
 use Illuminate\Http\Request;
+use Spatie\QueryBuilder\Exceptions\InvalidIncludeQuery;
 use Symfony\Component\HttpKernel\Exception\MethodNotAllowedHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
@@ -44,6 +45,21 @@ return Application::configure(basePath: dirname(__DIR__))
                     'status' => 'error',
                     'message' => "The {$request->method()} method is not allowed for this endpoint.",
                 ], 405);
+            }
+        });
+
+        $exceptions->render(function (InvalidIncludeQuery $e, Request $request) {
+            if ($request->is('api/*')) {
+                preg_match('/Requested include\(s\) `([^`]+)`/', $e->getMessage(), $matches);
+                $requestedIncludes = $matches[1] ?? 'unknown';
+
+                return response()->json([
+                    'status' => 'error',
+                    'message' => sprintf(
+                        'Invalid include parameter: "%s".',
+                        $requestedIncludes
+                    ),
+                ], 400);
             }
         });
     })->create();

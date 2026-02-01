@@ -15,15 +15,19 @@ trait ApiResponse
      */
     public function successResponse(string $message, mixed $data = [], int $code = Response::HTTP_OK): JsonResponse
     {
-        if ($data instanceof JsonResource) {
-            $data = $data->toArray(request());
-        }
-
-        return response()->json([
+        $response = [
             'status' => 'success',
             'message' => $message,
-            'data' => $data,
-        ], $code);
+        ];
+
+        if ($data instanceof JsonResource) {
+            $resourceResponse = $data->toResponse(request())->getData(true);
+            $response = array_merge($response, $resourceResponse);
+        } else {
+            $response['data'] = $data;
+        }
+
+        return response()->json($response, $code);
     }
 
     /**

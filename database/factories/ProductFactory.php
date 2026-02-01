@@ -27,6 +27,17 @@ final class ProductFactory extends Factory
             'slug' => Str::slug($name),
             'description' => fake()->paragraph(),
             'status' => fake()->randomElement(ProductStatus::cases()),
+            'is_featured' => fake()->boolean(30),
         ];
+    }
+
+    /**
+     * Indicate that the product is featured.
+     */
+    public function featured(): static
+    {
+        return $this->state(fn(array $attributes) => [
+            'is_featured' => true,
+        ]);
     }
 }

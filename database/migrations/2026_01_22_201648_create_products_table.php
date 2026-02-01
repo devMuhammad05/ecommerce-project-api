@@ -21,7 +21,7 @@ return new class extends Migration
             $table->string('slug')->unique();
             $table->text('description')->nullable();
             $table->string('status')->default(ProductStatus::Draft->value)->index();
-            // $table->boolean('is_engravable')->default(false);
+            $table->boolean('is_featured')->default(false);
             // $table->foreignId('brand_id')->nullable()->constrained()->onDelete('set null');
             $table->timestamps();
         });

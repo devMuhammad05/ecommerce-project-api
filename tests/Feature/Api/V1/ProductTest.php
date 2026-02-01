@@ -16,6 +16,53 @@ use Tests\TestCase;
 uses(TestCase::class, RefreshDatabase::class);
 
 describe('Product API', function () {
+    test('it shows only featured products if they exist', function () {
+        Product::factory()->count(10)->create(['is_featured' => false]);
+        Product::factory()->count(5)->create(['is_featured' => true]);
+
+        $response = $this->getJson('/api/v1/products');
+
+        $response->assertStatus(200)
+            ->assertJsonCount(5, 'data');
+
+        foreach ($response->json('data') as $product) {
+            $this->assertTrue(Product::find($product['id'])->is_featured);
+        }
+    });
+
+    test('it shows all products if no featured products exist', function () {
+        Product::factory()->count(10)->create(['is_featured' => false]);
+
+        $response = $this->getJson('/api/v1/products');
+
+        $response->assertStatus(200)
+            ->assertJsonCount(10, 'data');
+    });
+
+    test('it can list all products with pagination', function () {
+        Product::factory()->count(15)->create();
+
+        $response = $this->getJson('/api/v1/products');
+
+        $response->assertStatus(200)
+            ->assertJsonStructure([
+                'status',
+                'message',
+                'data' => [
+                    '*' => [
+                        'id',
+                        'name',
+                        'slug',
+                        'description',
+                        'status',
+                    ],
+                ],
+                'links',
+                'meta',
+            ])
+            ->assertJsonCount(15, 'data');
+    });
+
     test('it can show a product by slug with all required details', function () {
         $product = Product::factory()->create();
 

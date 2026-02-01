@@ -82,6 +82,7 @@ final class ProductSeeder extends Seeder
                 'slug' => Str::slug($pData['name']),
                 'description' => "An exquisite {$pData['name']} representing the pinnacle of luxury craftsmanship.",
                 'status' => ProductStatus::Active,
+                'is_featured' => true,
             ]);
 
             // Attach Category
